@@ -2,5 +2,8 @@
   "devDependencies": {
     "dotenv": "^16.1.4",
     "ethers": "^6.5.1"
+  },
+  "scripts": {
+    "start": "node app.js"
   }
 }
