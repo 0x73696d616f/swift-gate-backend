@@ -25,10 +25,13 @@ for(i = 11; i < numSignatures + 11; i++) {
 }
 
 async function onSwiftSend(contract, srcChain) {
-    contract.on("SwiftSend", async (token_, amount_, receiver_, dstChain_, isSingle_) => {
-        console.log("SwiftSend " + token_ + " " + amount_ + " " + receiver_ + " " + dstChain_ + " " + isSingle_);
+    contract.on("SwiftSend", async (token_, remoteToken_, amount_, receiver_, dstChain_, isSingle_) => {
+        console.log("SwiftSend " + token_ + " " + remoteToken_ + " " + amount_ + " " + receiver_ + " " + dstChain_ + " " + isSingle_);
         try {
-            await swiftReceive([token_], [amount_], [receiver_], [srcChain], [dstChain_]);
+            if (remoteToken_ == "0x0000000000000000000000000000000000000000")
+                await swiftReceive([token_], [amount_], [receiver_], [srcChain], [dstChain_]);
+            else
+                await swiftReceive([remoteToken_], [amount_], [receiver_], [srcChain], [dstChain_]);
         } catch (error) {
             console.log(error);
         }
