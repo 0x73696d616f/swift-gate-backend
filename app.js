@@ -16,8 +16,6 @@ const chainIdToRpcUrl = {
     2: rpcUrlOptimism
 }
 
-let nonce = 40;
-
 const numSignatures = 13;
 let governorPKs = [];
 let governors = [];
@@ -38,7 +36,7 @@ async function onSwiftSend(contract, srcChain) {
 }
 
 async function swiftReceive(tokens, amounts, receivers, srcChains, dstChains) {
-    const salt = ethers.solidityPacked(["uint256"], [nonce]);
+    const salt = ethers.solidityPacked(["uint256"], [Date.now()]);
     let messageHash = salt;
     let params = [];
     for (i = 0; i < tokens.length; i++) {
@@ -53,7 +51,7 @@ async function swiftReceive(tokens, amounts, receivers, srcChains, dstChains) {
     const wallet = new ethers.Wallet(privateKey, new JsonRpcProvider(rpcUrl));
     const contract = new ethers.Contract(swiftGateAddress, swiftGateAbi, wallet);
 
-    let tx = await contract.swiftReceive(params, signatures, salt);
+    await contract.swiftReceive(params, signatures, salt);
     nonce++;
 }
 
