@@ -30,9 +30,7 @@ async function onSwiftSend(contract, srcChain) {
     contract.on("SwiftSend", async (token_, amount_, receiver_, dstChain_, isSingle_) => {
         console.log("SwiftSend " + token_ + " " + amount_ + " " + receiver_ + " " + dstChain_ + " " + isSingle_);
         try {
-            if (isSingle_) {
-                await swiftReceive([token_], [amount_], [receiver_], [srcChain], [dstChain_]);
-            }
+            await swiftReceive([token_], [amount_], [receiver_], [srcChain], [dstChain_]);
         } catch (error) {
             console.log(error);
         }
