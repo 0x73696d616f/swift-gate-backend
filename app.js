@@ -82,5 +82,5 @@ function signMessage(messageHash) {
 onSwiftSend(swiftGateOptimism, 1);
 onSwiftSend(swiftGateScroll, 2);
 onSwiftSend(swiftGateChiado, 3);
-onSwiftSend(swiftGateMantle, 4);
+//onSwiftSend(swiftGateMantle, 4);
 onSwiftSend(swiftGateTaiko, 5);
