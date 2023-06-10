@@ -2,7 +2,7 @@ const { ethers, JsonRpcProvider, WebSocketProvider } = require('ethers');
 let swiftGateAbi = require("./SwiftGate.json").abi;
 require("dotenv").config();
 
-const swiftGateAddress = "0xB84f07612F4bfEc42E042b6CDD26df496b3d397f";
+const swiftGateAddress = "0xB84f07612F4bfEc42E042b6CDD26df496b3d397f"; // same for all blockchains
 const rpcUrlOptimism = process.env.RPC_URL_OPTIMISM_GOERLI;
 const rpcUrlScroll = process.env.RPC_URL_SCROLL_ALPHA;
 const rpcUrlChiado = process.env.RPC_URL_CHIADO;
