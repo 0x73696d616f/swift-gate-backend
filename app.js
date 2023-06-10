@@ -1,19 +1,34 @@
-const { ethers, JsonRpcProvider } = require('ethers');
+const { ethers, JsonRpcProvider, WebSocketProvider } = require('ethers');
 let swiftGateAbi = require("./SwiftGate.json").abi;
 require("dotenv").config();
 
-const swiftGateAddress = "0x7374Da744DD2b54e50b933692f471B6395023B12";
-const rpcUrlScroll = process.env.RPC_URL_SCROLL;
-const rpcUrlOptimism = process.env.RPC_URL_OPTIMISM;
-const batchSize = 5;
+const swiftGateAddress = "0xB84f07612F4bfEc42E042b6CDD26df496b3d397f";
+const rpcUrlOptimism = process.env.RPC_URL_OPTIMISM_GOERLI;
+const rpcUrlScroll = process.env.RPC_URL_SCROLL_ALPHA;
+const rpcUrlChiado = process.env.RPC_URL_CHIADO;
+const rpcUrlMantle = process.env.RPC_URL_MANTLE;
+const rpcUrlTaiko = process.env.RPC_URL_TAIKO;
+
 const privateKey = process.env.PRIVATE_KEY;
 
-const swiftGateScroll = new ethers.Contract(swiftGateAddress, swiftGateAbi, new JsonRpcProvider(rpcUrlScroll));
-const swiftGateOptimism = new ethers.Contract(swiftGateAddress, swiftGateAbi, new JsonRpcProvider(rpcUrlOptimism));
+const optimismWallet = new ethers.Wallet(privateKey, new JsonRpcProvider(rpcUrlOptimism));
+const scrollWallet = new ethers.Wallet(privateKey, new JsonRpcProvider(rpcUrlScroll));
+const chiadoWallet = new ethers.Wallet(privateKey, new JsonRpcProvider(rpcUrlChiado));
+const mantleWallet = new ethers.Wallet(privateKey, new JsonRpcProvider(rpcUrlMantle));
+const taikoWallet = new ethers.Wallet(privateKey, new JsonRpcProvider(rpcUrlTaiko));
 
-const chainIdToRpcUrl = {
-    1: rpcUrlScroll,
-    2: rpcUrlOptimism
+const swiftGateOptimism = new ethers.Contract(swiftGateAddress, swiftGateAbi, optimismWallet);
+const swiftGateScroll = new ethers.Contract(swiftGateAddress, swiftGateAbi, scrollWallet);
+const swiftGateChiado = new ethers.Contract(swiftGateAddress, swiftGateAbi, chiadoWallet);
+const swiftGateMantle = new ethers.Contract(swiftGateAddress, swiftGateAbi, mantleWallet);
+const swiftGateTaiko = new ethers.Contract(swiftGateAddress, swiftGateAbi, taikoWallet);
+
+const chainIdToContract = {
+    1: swiftGateOptimism,
+    2: swiftGateScroll,
+    3: swiftGateChiado,
+    4: swiftGateMantle,
+    5: swiftGateTaiko
 }
 
 const numSignatures = 13;
@@ -50,12 +65,9 @@ async function swiftReceive(tokens, amounts, receivers, srcChains, dstChains) {
     }
     let signatures = signMessage(messageHash);
 
-    const rpcUrl = chainIdToRpcUrl[dstChains[0]];
-    const wallet = new ethers.Wallet(privateKey, new JsonRpcProvider(rpcUrl));
-    const contract = new ethers.Contract(swiftGateAddress, swiftGateAbi, wallet);
+    const contract = chainIdToContract[dstChains[0]];
 
     await contract.swiftReceive(params, signatures, salt);
-    nonce++;
 }
 
 function signMessage(messageHash) {
@@ -67,5 +79,8 @@ function signMessage(messageHash) {
     return signatures;
 }
 
-onSwiftSend(swiftGateScroll, 1);
-onSwiftSend(swiftGateOptimism, 2);
+onSwiftSend(swiftGateOptimism, 1);
+onSwiftSend(swiftGateScroll, 2);
+onSwiftSend(swiftGateChiado, 3);
+onSwiftSend(swiftGateMantle, 4);
+onSwiftSend(swiftGateTaiko, 5);
